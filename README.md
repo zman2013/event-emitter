@@ -5,7 +5,7 @@ a lightweight event emitter.
 lightweight  
 high performance  
 no dependency  
-not thread-safe  
+both thread-safe & non-thread-safe  
 
 # intefaces
 ``` java
@@ -25,7 +25,7 @@ void off(Object event, Consumer consumer)
 Set<Object> events()
 
 // 订阅此事件的监听者列表
-List<Consumer> listeners(Object event)
+Set<Consumer> listeners(Object event)
 ```
 
 # examples

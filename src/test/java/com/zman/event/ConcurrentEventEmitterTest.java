@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 import static org.mockito.Mockito.*;
 
-public class EventEmitterTest {
+public class ConcurrentEventEmitterTest {
 
     Consumer consumer1 = mock(Consumer.class);
     Consumer consumer2 = mock(Consumer.class);
@@ -22,7 +22,7 @@ public class EventEmitterTest {
 
         String event = "bomb";
 
-        EventEmitter eventEmitter = new EventEmitter();
+        ConcurrentEventEmitter eventEmitter = new ConcurrentEventEmitter();
         eventEmitter.on(event, consumer1);
         Assert.assertEquals(1, eventEmitter.events().size());
         Assert.assertEquals(1, eventEmitter.listeners(event).size());
@@ -47,7 +47,7 @@ public class EventEmitterTest {
     public void argumentsIllegal(){
         String event = "bomb";
 
-        EventEmitter eventEmitter = new EventEmitter();
+        ConcurrentEventEmitter eventEmitter = new ConcurrentEventEmitter();
 
         try {
             eventEmitter.on(null, null);
@@ -83,7 +83,7 @@ public class EventEmitterTest {
         String event1 = "bomb1";
         String event2 = "bomb2";
 
-        EventEmitter eventEmitter = new EventEmitter();
+        EventEmitter eventEmitter = new ConcurrentEventEmitter();
 
         eventEmitter.on(event1, consumer1);
         eventEmitter.on(event1, consumer2);
@@ -123,7 +123,7 @@ public class EventEmitterTest {
      */
     @Test
     public void emitEventException(){
-        EventEmitter eventEmitter = new EventEmitter();
+        ConcurrentEventEmitter eventEmitter = new ConcurrentEventEmitter();
 
         try {
             eventEmitter.emit(null);
@@ -139,5 +139,64 @@ public class EventEmitterTest {
 
     }
 
+    /**
+     * 并发操作emitter
+     */
+    @Test
+    public void onOffEmitConcurrently() throws InterruptedException {
+
+        String event1 = "bomb1";
+        String event2 = "bomb2";
+        String event3 = "bomb3";
+
+        ConcurrentEventEmitter eventEmitter = new ConcurrentEventEmitter();
+        eventEmitter.on(event1, consumer1);
+
+        CountDownLatch latch = new CountDownLatch(4);
+        new Thread(()->{
+            for(int i =0; i < 10000; i++) {
+                eventEmitter.emit(event1);
+                eventEmitter.emit(event2);
+            }
+            latch.countDown();
+        }).start();
+
+        new Thread(()->{
+            for (int i = 0; i < 10000; i ++){
+                eventEmitter.on(event1, consumer2);
+                eventEmitter.on(event2, consumer2);
+                eventEmitter.on(event3, consumer2);
+
+                eventEmitter.on(event1, consumer3);
+                eventEmitter.on(event2, consumer3);
+                eventEmitter.on(event3, consumer3);
+            }
+            latch.countDown();
+        }).start();
+
+        new Thread(()->{
+            for (int i = 0; i < 10000; i ++){
+                eventEmitter.off(event1, consumer2);
+                eventEmitter.off(event2, consumer2);
+                eventEmitter.off(event3, consumer2);
+
+            }
+            latch.countDown();
+        }).start();
+
+        new Thread(()->{
+            for (int i = 0; i < 10000; i ++){
+
+                eventEmitter.off(event1, consumer3);
+                eventEmitter.off(event2, consumer3);
+                eventEmitter.off(event3, consumer3);
+            }
+            latch.countDown();
+        }).start();
+
+        latch.await();
+
+        verify(consumer1, times(10000)).accept(null);
+    }
 
 }

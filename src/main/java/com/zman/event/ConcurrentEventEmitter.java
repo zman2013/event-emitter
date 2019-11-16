@@ -1,30 +1,22 @@
 package com.zman.event;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
- * 事件订阅、通知器
+ * thread-safe
  */
-public class EventEmitter {
+public class ConcurrentEventEmitter extends EventEmitter{
 
     /**
      * 事件 -> 函数列表
-     * 每当发生事件时，会调用所有订阅事件的函数
+     * 每当发生事件时，会按订阅顺序依次调用函数
      */
-    private Map<Object, Set<Consumer>> eventListenersMap = new HashMap<>();
+    private Map<Object, Map<Consumer,Object>> eventListenersMap = new ConcurrentHashMap<>();
 
-    /**
-     * 发射一个没有body的事件
-     * @param event 事件标识
-     */
-    public void emit(Object event){
-        if(event == null){
-            throw new IllegalArgumentException("event can't be null");
-        }
+    private final Object lock = new Object();
 
-        emit(event, null);
-    }
 
     /**
      * 发射一个携带body的事件
@@ -36,7 +28,14 @@ public class EventEmitter {
             throw new IllegalArgumentException("event can't be null");
         }
 
-        eventListenersMap.computeIfAbsent(event,(e)-> new HashSet<>()).forEach(f -> f.accept(data));
+        if( eventListenersMap.containsKey(event)){
+            synchronized (lock) {
+                if(eventListenersMap.containsKey(event)) {
+                    eventListenersMap.get(event).forEach((f,v) -> f.accept(data));
+                }
+            }
+        }
+
     }
 
     /**
@@ -52,7 +51,14 @@ public class EventEmitter {
             throw new IllegalArgumentException("consumer can't be null");
         }
 
-        eventListenersMap.computeIfAbsent(event, (e)->new HashSet<>()).add(consumer);
+        synchronized (lock){
+            if(!eventListenersMap.containsKey(event)){
+                Map<Consumer, Object> set = new ConcurrentHashMap<>();
+                eventListenersMap.put(event, set);
+            }
+
+            eventListenersMap.get(event).put(consumer, 0);
+        }
     }
 
     /**
@@ -69,9 +75,13 @@ public class EventEmitter {
         }
 
         if( eventListenersMap.containsKey(event)) {
-            eventListenersMap.get(event).remove(consumer);
-            if (eventListenersMap.get(event).size()==0){
-                eventListenersMap.remove(event);
+            synchronized (lock) {
+                if( eventListenersMap.containsKey(event)) {
+                    eventListenersMap.get(event).remove(consumer);
+                    if (eventListenersMap.get(event).size() == 0) {
+                        eventListenersMap.remove(event);
+                    }
+                }
             }
         }
 
@@ -84,13 +94,15 @@ public class EventEmitter {
         return eventListenersMap.keySet();
     }
 
+
     /**
      * @param event 事件标识
      * @return 订阅此事件的监听者列表
      */
     public Set<Consumer> listeners(Object event){
-        return eventListenersMap.getOrDefault(event, Collections.emptySet());
-
+        return eventListenersMap.getOrDefault(event, Collections.emptyMap()).keySet();
     }
+
+
 
 }
