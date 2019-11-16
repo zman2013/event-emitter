@@ -6,6 +6,27 @@
     <artifactId>event-emitter</artifactId>
     <version>0.0.4-SNAPSHOT</version>
 
+    <name>Lightweight Event Emitter</name>
+    <description>Both thread-safe and non-thread-safe implementation.</description>
+    <url>https://github.com/zman2013/event-emitter</url>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Zhiyuan Man</name>
+            <email>vsmingren@qq.com</email>
+            <organization>zman</organization>
+            <organizationUrl>https://github.com/zman2013</organizationUrl>
+            <timezone>UTC+08:00</timezone>
+        </developer>
+    </developers>
+
     <properties>
         <version.maven-release-plugin>2.5.3</version.maven-release-plugin>
         <version.maven-scm-provider-gitexe>1.9.5</version.maven-scm-provider-gitexe>
