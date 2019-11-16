@@ -1,6 +1,6 @@
-import com.zman.event.EventEmitter;
+import com.zman.event.ConcurrentEventEmitter;
 
-public class Airplane extends EventEmitter {
+public class Airplane extends ConcurrentEventEmitter {
 
     public void takeoff(){
         emit("takeoff");
