@@ -1,3 +1,6 @@
+[![Travis Build](https://api.travis-ci.org/zman2013/event-emitter.svg?branch=master)](https://api.travis-ci.org/zman2013/event-emitter.svg?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/zman2013/event-emitter/badge.svg?branch=master)](https://coveralls.io/github/zman2013/event-emitter?branch=master)
+
 # event-emitter
 a lightweight event emitter.
 
