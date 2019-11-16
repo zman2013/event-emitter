@@ -4,7 +4,7 @@
 
     <groupId>com.zmannotes.event</groupId>
     <artifactId>event-emitter</artifactId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.4</version>
 
     <name>Lightweight Event Emitter</name>
     <description>Both thread-safe and non-thread-safe implementation.</description>
@@ -181,7 +181,7 @@
         <connection>scm:git:git@github.com:zman2013/pull-stream.git</connection>
         <developerConnection>scm:git:git@github.com:zman2013/pull-stream.git</developerConnection>
         <url>https://github.com/zman2013/pull-stream</url>
-        <tag>HEAD</tag>
+        <tag>event-emitter-0.0.4</tag>
     </scm>
 
     <profiles>
