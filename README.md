@@ -16,7 +16,7 @@ both thread-safe & non-thread-safe
 <dependency>
     <groupId>com.zmannotes.event</groupId>
     <artifactId>event-emitter</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
 </dependency>
 ```
 
@@ -29,10 +29,10 @@ void emit(Object event)
 void emit(Object event, Object data)
 
 // 订阅事件，事件发生时会回调consumer
-void on(Object event, Consumer consumer)
+EventEmitter on(Object event, Consumer consumer)
 
 // 取消订阅，事件发生时不会再调用此函数
-void off(Object event, Consumer consumer)
+EventEmitter off(Object event, Consumer consumer)
 
 // 所有被订阅的事件标识
 Set<Object> events()
@@ -65,9 +65,9 @@ public class Airplane extends ConcurrentEventEmitter {
     public static void main(String[] args){
         Airplane airplane = new Airplane();
 
-        airplane.on("takeoff", d -> System.out.println("takeoff"));
-        airplane.on("speed",   d -> System.out.println("speed: "+d));
-        airplane.on("landing", d -> System.out.println("landing"));
+        airplane.on("takeoff", d -> System.out.println("takeoff"))
+            .on("speed",   d -> System.out.println("speed: "+d))
+            .on("landing", d -> System.out.println("landing"));
 
         airplane.takeoff();
         airplane.flying(300);
@@ -99,9 +99,9 @@ public class Airplane extends EventEmitter {
     public static void main(String[] args){
         Airplane airplane = new Airplane();
 
-        airplane.on("takeoff", d -> System.out.println("takeoff"));
-        airplane.on("speed",   d -> System.out.println("speed: "+d));
-        airplane.on("landing", d -> System.out.println("landing"));
+        airplane.on("takeoff", d -> System.out.println("takeoff"))
+            .on("speed",   d -> System.out.println("speed: "+d))
+            .on("landing", d -> System.out.println("landing"));
 
         airplane.takeoff();
         airplane.flying(300);

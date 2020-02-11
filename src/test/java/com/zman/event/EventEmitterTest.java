@@ -3,7 +3,6 @@ package com.zman.event;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
 import static org.mockito.Mockito.*;
@@ -85,9 +84,9 @@ public class EventEmitterTest {
 
         EventEmitter eventEmitter = new EventEmitter();
 
-        eventEmitter.on(event1, consumer1);
-        eventEmitter.on(event1, consumer2);
-        eventEmitter.on(event2, consumer3);
+        eventEmitter.on(event1, consumer1)
+            .on(event1, consumer2)
+            .on(event2, consumer3);
 
         eventEmitter.emit(event1);
         verify(consumer1, times(1)).accept(null);
@@ -108,9 +107,9 @@ public class EventEmitterTest {
 
         EventEmitter eventEmitter = new EventEmitter();
 
-        eventEmitter.on(event1, consumer1);
-        eventEmitter.on(event1, consumer2);
-        eventEmitter.on(event2, consumer3);
+        eventEmitter.on(event1, consumer1)
+            .on(event1, consumer2)
+            .on(event2, consumer3);
 
         eventEmitter.emit(event3);
         verify(consumer1, never()).accept(null);

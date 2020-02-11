@@ -44,7 +44,7 @@ public class EventEmitter {
      * @param event     事件标识
      * @param consumer  函数引用，事件发生时调用此函数
      */
-    public void on(Object event, Consumer consumer){
+    public EventEmitter on(Object event, Consumer consumer){
         if(event == null){
             throw new IllegalArgumentException("event can't be null");
         }
@@ -53,6 +53,7 @@ public class EventEmitter {
         }
 
         eventListenersMap.computeIfAbsent(event, (e)->new HashSet<>()).add(consumer);
+        return this;
     }
 
     /**
@@ -60,7 +61,7 @@ public class EventEmitter {
      * @param event     事件标识
      * @param consumer  函数引用，事件发生时不会再调用此函数
      */
-    public void off(Object event, Consumer consumer){
+    public EventEmitter off(Object event, Consumer consumer){
         if(event == null){
             throw new IllegalArgumentException("event can't be null");
         }
@@ -74,7 +75,7 @@ public class EventEmitter {
                 eventListenersMap.remove(event);
             }
         }
-
+        return this;
     }
 
     /**
